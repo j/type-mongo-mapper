@@ -426,6 +426,30 @@ test('documentToClass() with @EmbedMany() as a discriminator type', async t => {
   t.is(user.pets[1].speak(), 'woof');
 });
 
+test('documentToClass() ignores fields that are not mapped', async t => {
+  @Document()
+  class User {
+    @Field() public _id: ObjectID;
+
+    @Field() public firstName: string;
+
+    public lastName: string;
+  }
+
+  const doc = {
+    _id: new ObjectID('507f1f77bcf86cd799439011'),
+    firstName: 'Jordy',
+    lastName: 'Smith'
+  };
+
+  const user = documentToClass(User, doc);
+
+  t.true(user instanceof User);
+  t.is(user._id.toHexString(), '507f1f77bcf86cd799439011');
+  t.is(user.firstName, 'Jordy');
+  t.is(user.lastName, undefined);
+});
+
 test('documentToClass() errors when class passed is not mapped', async t => {
   class User {}
 

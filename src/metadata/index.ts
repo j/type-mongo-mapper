@@ -132,20 +132,20 @@ export function defineDocumentMetadataEmbeddedField<T>(
   embedManyAs?: EmbedManyAs
 ): void {
   // if `embedManyAs` is not defined, treat it as a single embed.
-  let type = DocumentMetadataFieldType.EMBED_ONE;
+  let type: DocumentMetadataFieldType;
 
-  if (type) {
-    switch (embedManyAs) {
-      case EmbedManyAs.MAP:
-        type = DocumentMetadataFieldType.EMBED_MAP;
-        break;
-      case EmbedManyAs.OBJECT:
-        type = DocumentMetadataFieldType.EMBED_OBJECT;
-        break;
-      case EmbedManyAs.ARRAY:
-        type = DocumentMetadataFieldType.EMBED_ARRAY;
-        break;
-    }
+  switch (embedManyAs) {
+    case EmbedManyAs.MAP:
+      type = DocumentMetadataFieldType.EMBED_MAP;
+      break;
+    case EmbedManyAs.OBJECT:
+      type = DocumentMetadataFieldType.EMBED_OBJECT;
+      break;
+    case EmbedManyAs.ARRAY:
+      type = DocumentMetadataFieldType.EMBED_ARRAY;
+      break;
+    default:
+      type = DocumentMetadataFieldType.EMBED_ONE;
   }
 
   // creates an instance of the @EmbeddedDocument class.
@@ -235,7 +235,13 @@ export function getDocumentMetadata<T>(
 /**
  * Merges parent's fields into the upper-most document.
  */
-export function processAndValidateMetadata(meta: DocumentMetadata): void {
+export function processAndValidateMetadata(meta?: DocumentMetadata): void {
+  if (!meta) {
+    throw new Error(
+      'Value passed to "processAndValidateMetadata" is not a valid DocumentMetadata.'
+    );
+  }
+
   if (meta.isProcessed) {
     return;
   }

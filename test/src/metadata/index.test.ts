@@ -58,3 +58,14 @@ test("processAndValidateMetadata() throws error when base's base is incompatible
     '"User" extends "BaseBase" which are incompatible types.'
   );
 });
+
+test('processAndValidateMetadata() throws error when metadata is invalid', t => {
+  const error = t.throws(() => {
+    processAndValidateMetadata(null);
+  });
+
+  t.is(
+    error.message,
+    'Value passed to "processAndValidateMetadata" is not a valid DocumentMetadata.'
+  );
+});

@@ -15,6 +15,7 @@ function processObject(
   const value = {};
 
   for (const k in object) {
+    /* istanbul ignore else */
     if (object.hasOwnProperty(k)) {
       value[k] = fn(k, object[k]);
     }

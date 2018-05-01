@@ -255,6 +255,98 @@ test('classToDocument() throws error when referencing another Document', async t
   );
 });
 
+test('classToDocument() ignores doc field that is not mapped', async t => {
+  const id = new ObjectID();
+
+  @Document()
+  class User {
+    @Field() public _id: ObjectID;
+
+    @Field() public firstName: string;
+
+    public lastName: string;
+  }
+
+  const user = new User();
+  user._id = id;
+  user.firstName = 'John';
+  user.lastName = 'Doe';
+
+  const doc = classToDocument(user);
+
+  t.false(doc instanceof User);
+  t.deepEqual(doc, {
+    _id: id,
+    firstName: 'John'
+  });
+});
+
+test('classToDocument() nested inheritance', async t => {
+  @Document()
+  class BaseBaseDocument {
+    @Field() public _id: ObjectID;
+  }
+
+  @Document()
+  class BaseDocument extends BaseBaseDocument {
+    @Field() public createdAt: Date;
+    @Field() public updatedAt: Date;
+  }
+
+  @Document()
+  class User extends BaseDocument {
+    @Field() public firstName: string;
+    @Field() public lastName: string;
+  }
+
+  const id = new ObjectID();
+  const createdAt = new Date();
+  const updatedAt = new Date();
+
+  const user = new User();
+  user._id = id;
+  user.firstName = 'John';
+  user.lastName = 'Doe';
+  user.createdAt = createdAt;
+  user.updatedAt = updatedAt;
+
+  const doc = classToDocument(user);
+
+  t.false(doc instanceof User);
+  t.deepEqual(doc, {
+    _id: id,
+    firstName: 'John',
+    lastName: 'Doe',
+    createdAt,
+    updatedAt
+  });
+});
+
+test('classToDocument() errors on incompatible inheritance type', async t => {
+  @EmbeddedDocument()
+  class BaseDocument {
+    @Field() public _id: ObjectID;
+  }
+
+  @Document()
+  class User extends BaseDocument {
+    @Field() public firstName: string;
+    @Field() public lastName: string;
+  }
+
+  const user = new User();
+  user._id = new ObjectID();
+  user.firstName = 'John';
+  user.lastName = 'Doe';
+
+  const error = t.throws(() => classToDocument(user));
+
+  t.is(
+    error.message,
+    '"User" extends "BaseDocument" which are incompatible types.'
+  );
+});
+
 test('classToDocument() errors when class passed is not mapped', async t => {
   class User {}
 

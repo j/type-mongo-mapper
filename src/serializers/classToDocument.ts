@@ -1,7 +1,8 @@
 import {
   DocumentMetadataFieldType,
   getDocumentMetadata,
-  isDocument
+  isDocument,
+  processAndValidateMetadata
 } from '../metadata';
 import { eachInMapOrObject } from '../util/eachInMapOrObject';
 
@@ -26,6 +27,8 @@ export function classToDocument<T>(object: T): any {
 
 function process<T>(object: T): any {
   const meta = getDocumentMetadata(object.constructor);
+
+  processAndValidateMetadata(meta);
 
   const keys = Object.keys(object);
 

@@ -34,10 +34,7 @@ export function documentToClass<T>(
 }
 
 function process<T>(object: T, doc: any): T {
-  const meta =
-    object && object.constructor
-      ? getDocumentMetadata(object.constructor)
-      : null;
+  const meta = getDocumentMetadata(object.constructor);
 
   processAndValidateMetadata(meta);
 
