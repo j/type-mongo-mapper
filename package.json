@@ -18,6 +18,7 @@
     "test": "run-s build test:*",
     "test:lint": "npm run fix",
     "test:unit": "nyc --silent ava",
+    "test:cov": "nyc report --reporter=lcov",
     "test:nsp": "nsp check",
     "watch": "run-s clean build:main && run-p 'build:main -- -w' 'test:unit -- --watch'",
     "cov": "run-s build test:unit cov:html && opn coverage/index.html",
