@@ -2,10 +2,10 @@
 <h3 align="center">A <a href="https://www.typescriptlang.org/docs/handbook/decorators.html">@decorator</a> based <a href="https://www.mongodb.com/">MongoDB</a> document to ES6 class mapper.</h3>
 <p align="center">
     <a href="https://travis-ci.org/j/type-mongo-mapper">
-        <img alt="Travis" src="https://img.shields.io/travis/j/type-mongo-mapper/preview.svg">
+        <img alt="travis" src="https://img.shields.io/travis/j/type-mongo-mapper/master.svg">
     </a>
-    <a href="https://codecov.io/gh/j/type-mongo-mapper/branch/preview">
-        <img alt="Travis" src="https://img.shields.io/codecov/c/github/j/type-mongo-mapper/preview.svg">
+    <a href="https://codecov.io/gh/j/type-mongo-mapper/branch/master">
+        <img alt="codecov" src="https://img.shields.io/codecov/c/github/j/type-mongo-mapper/master.svg">
     </a>
 </p>
 
