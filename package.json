@@ -1,0 +1,82 @@
+{
+  "name": "type-mongo-mapper",
+  "version": "0.0.0",
+  "description": "A no frills ES6 class to MongoDB document mapper.",
+  "main": "build/main/src/index.js",
+  "typings": "build/main/src/index.d.ts",
+  "module": "build/module/src/index.js",
+  "repository": "https://github.com/j/type-mongo-mapper",
+  "license": "MIT",
+  "keywords": [],
+  "scripts": {
+    "build": "run-s clean && run-p build:*",
+    "build:main": "tsc -p tsconfig.json",
+    "build:module": "tsc -p tsconfig.module.json",
+    "fix": "run-s fix:*",
+    "fix:prettier": "prettier 'src/**/*.ts' 'test/**/*.ts' --write",
+    "fix:tslint": "tslint --fix --project .",
+    "test": "run-s build test:*",
+    "test:lint": "npm run fix",
+    "test:unit": "nyc --silent ava",
+    "test:nsp": "nsp check",
+    "watch": "run-s clean build:main && run-p 'build:main -- -w' 'test:unit -- --watch'",
+    "cov": "run-s build test:unit cov:html && opn coverage/index.html",
+    "cov:html": "nyc report --reporter=html",
+    "cov:send": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "cov:check": "nyc report && nyc check-coverage --lines 90 --functions 90 --branches 90",
+    "release": "standard-version",
+    "clean": "trash build"
+  },
+  "engines": {
+    "node": ">=8.9"
+  },
+  "dependencies": {
+    "mongodb": "^3.0.7",
+    "reflect-metadata": "^0.1.12"
+  },
+  "devDependencies": {
+    "@types/mongodb": "^3.0.15",
+    "ava": "^1.0.0-beta.3",
+    "codecov": "^3.0.0",
+    "cz-conventional-changelog": "^2.1.0",
+    "gh-pages": "^1.0.0",
+    "npm-run-all": "^4.1.2",
+    "nsp": "^3.2.1",
+    "nyc": "^11.5.0",
+    "opn-cli": "^3.1.0",
+    "prettier": "^1.10.2",
+    "standard-version": "^4.0.0",
+    "trash-cli": "^1.4.0",
+    "tslint": "^5.4.3",
+    "tslint-config-prettier": "^1.8.0",
+    "tslint-immutable": "^4.5.1",
+    "typescript": "^2.4.1"
+  },
+  "ava": {
+    "failFast": true,
+    "files": [
+      "build/main/test/**/*.test.js"
+    ],
+    "sources": [
+      "build/main/src/**/*.js"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "greenkeeper": {
+    "ignore": [
+      "@types/node"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "nyc": {
+    "exclude": [
+      "build/main/test"
+    ]
+  }
+}

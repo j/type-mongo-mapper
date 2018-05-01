@@ -1,0 +1,12 @@
+{
+  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-immutable"],
+  "rules": {
+    "variable-name": false,
+    "object-literal-sort-keys": false,
+    "no-unused-variable": false,
+    "interface-name": [true, "never-prefix"],
+    "no-implicit-dependencies": [true, "dev"],
+    "ban-types": false,
+    "max-classes-per-file": false
+  }
+}
