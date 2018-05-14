@@ -11,15 +11,13 @@ import { eachInMapOrObject } from '../util/eachInMapOrObject';
  *
  * This outputs an object that is valid for MongoDB.
  */
-export function classToDocument<T>(object: T): any {
+export function unmap<T>(object: T): any {
   if (
     typeof object === 'object' &&
     object.constructor &&
     !isDocument(object.constructor)
   ) {
-    throw new Error(
-      'Object passed to "classToDocument" is not a valid mapped document.'
-    );
+    throw new Error('Object passed to "unmap" is not a valid mapped document.');
   }
 
   return process(object);

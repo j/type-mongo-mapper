@@ -7,10 +7,10 @@ import {
   EmbedManyAs,
   EmbedOne,
   Field
-} from '../../../src/decorators';
-import { documentToClass } from '../../../src/serializers/documentToClass';
+} from '../../../../src/decorators';
+import { map } from '../../../../src/mappers/map';
 
-test('documentToClass() with simple class', async t => {
+test('map() with simple class', async t => {
   @Document()
   class User {
     @Field() public _id: ObjectID;
@@ -24,7 +24,7 @@ test('documentToClass() with simple class', async t => {
     lastName: 'Smith'
   };
 
-  const user = documentToClass(User, doc);
+  const user = map(User, doc);
 
   t.true(user instanceof User);
   t.is(user._id.toHexString(), '507f1f77bcf86cd799439011');
@@ -32,7 +32,7 @@ test('documentToClass() with simple class', async t => {
   t.is(user.lastName, 'Smith');
 });
 
-test('documentToClass() with simple instantiated class', async t => {
+test('map() with simple instantiated class', async t => {
   @Document()
   class User {
     @Field() public _id: ObjectID;
@@ -48,7 +48,7 @@ test('documentToClass() with simple instantiated class', async t => {
   const instantiated = new User();
   instantiated.firstName = 'John';
 
-  const user = documentToClass(instantiated, doc);
+  const user = map(instantiated, doc);
 
   t.true(user === instantiated);
   t.true(user instanceof User);
@@ -57,7 +57,7 @@ test('documentToClass() with simple instantiated class', async t => {
   t.is(user.lastName, 'Smith');
 });
 
-test('documentToClass() with @EmbedOne()', async t => {
+test('map() with @EmbedOne()', async t => {
   @EmbeddedDocument()
   class Address {
     @Field() public city: string;
@@ -84,7 +84,7 @@ test('documentToClass() with @EmbedOne()', async t => {
     }
   };
 
-  const user = documentToClass(User, doc);
+  const user = map(User, doc);
 
   t.true(user instanceof User);
   t.true(user.address instanceof Address);
@@ -95,7 +95,7 @@ test('documentToClass() with @EmbedOne()', async t => {
   t.is(user.address.zip, 92107);
 });
 
-test('documentToClass() with @EmbedMany()', async t => {
+test('map() with @EmbedMany()', async t => {
   @EmbeddedDocument()
   class Address {
     @Field() public city: string;
@@ -128,7 +128,7 @@ test('documentToClass() with @EmbedMany()', async t => {
     ]
   };
 
-  const user = documentToClass(User, doc);
+  const user = map(User, doc);
 
   t.true(user instanceof User);
   t.true(user.addresses[0] instanceof Address);
@@ -142,7 +142,7 @@ test('documentToClass() with @EmbedMany()', async t => {
   t.is(user.addresses[1].zip, 92008);
 });
 
-test('documentToClass() with @EmbedMany() as object', async t => {
+test('map() with @EmbedMany() as object', async t => {
   @EmbeddedDocument()
   class Address {
     @Field() public city: string;
@@ -175,7 +175,7 @@ test('documentToClass() with @EmbedMany() as object', async t => {
     }
   };
 
-  const user = documentToClass(User, doc);
+  const user = map(User, doc);
 
   t.true(user instanceof User);
   t.false(user.addresses instanceof Map);
@@ -190,7 +190,7 @@ test('documentToClass() with @EmbedMany() as object', async t => {
   t.is(user.addresses.office.zip, 92008);
 });
 
-test('documentToClass() with @EmbedMany() as map', async t => {
+test('map() with @EmbedMany() as map', async t => {
   @EmbeddedDocument()
   class Address {
     @Field() public city: string;
@@ -223,7 +223,7 @@ test('documentToClass() with @EmbedMany() as map', async t => {
     }
   };
 
-  const user = documentToClass(User, doc);
+  const user = map(User, doc);
 
   t.true(user instanceof User);
   t.true(user.addresses instanceof Map);
@@ -238,7 +238,7 @@ test('documentToClass() with @EmbedMany() as map', async t => {
   t.is(user.addresses.get('office').zip, 92008);
 });
 
-test('documentToClass() errors when @EmbedOne() has an unmapped type', async t => {
+test('map() errors when @EmbedOne() has an unmapped type', async t => {
   class Address {
     @Field() public city: string;
     @Field() public zip: number;
@@ -265,13 +265,13 @@ test('documentToClass() errors when @EmbedOne() has an unmapped type', async t =
   };
 
   const error = t.throws(() => {
-    documentToClass(User, doc);
+    map(User, doc);
   });
 
   t.is(error.message, 'Class "Address" is not a valid embedded document.');
 });
 
-test('documentToClass() with @EmbedOne() as a discriminator type', async t => {
+test('map() with @EmbedOne() as a discriminator type', async t => {
   @EmbeddedDocument()
   abstract class Animal {
     public abstract type: string;
@@ -329,8 +329,8 @@ test('documentToClass() with @EmbedOne() as a discriminator type', async t => {
     }
   };
 
-  const catUser = documentToClass(User, docWithCat);
-  const dogUser = documentToClass(User, docWithDog);
+  const catUser = map(User, docWithCat);
+  const dogUser = map(User, docWithDog);
 
   // cat user assertions
   t.true(catUser instanceof User);
@@ -353,7 +353,7 @@ test('documentToClass() with @EmbedOne() as a discriminator type', async t => {
   t.is(dogUser.pet.speak(), 'woof');
 });
 
-test('documentToClass() with @EmbedMany() as a discriminator type', async t => {
+test('map() with @EmbedMany() as a discriminator type', async t => {
   @EmbeddedDocument()
   abstract class Animal {
     public abstract type: string;
@@ -409,7 +409,7 @@ test('documentToClass() with @EmbedMany() as a discriminator type', async t => {
     ]
   };
 
-  const user = documentToClass(User, doc);
+  const user = map(User, doc);
 
   t.true(user instanceof User);
   t.is(user._id.toHexString(), '507f1f77bcf86cd799439011');
@@ -426,7 +426,7 @@ test('documentToClass() with @EmbedMany() as a discriminator type', async t => {
   t.is(user.pets[1].speak(), 'woof');
 });
 
-test('documentToClass() ignores fields that are not mapped', async t => {
+test('map() ignores fields that are not mapped', async t => {
   @Document()
   class User {
     @Field() public _id: ObjectID;
@@ -442,7 +442,7 @@ test('documentToClass() ignores fields that are not mapped', async t => {
     lastName: 'Smith'
   };
 
-  const user = documentToClass(User, doc);
+  const user = map(User, doc);
 
   t.true(user instanceof User);
   t.is(user._id.toHexString(), '507f1f77bcf86cd799439011');
@@ -450,15 +450,12 @@ test('documentToClass() ignores fields that are not mapped', async t => {
   t.is(user.lastName, undefined);
 });
 
-test('documentToClass() errors when class passed is not mapped', async t => {
+test('map() errors when class passed is not mapped', async t => {
   class User {}
 
   const error = t.throws(() => {
-    documentToClass(User, { foo: 'bar' });
+    map(User, { foo: 'bar' });
   });
 
-  t.is(
-    error.message,
-    'Object passed to "documentToClass" is not a valid mapped document.'
-  );
+  t.is(error.message, 'Object passed to "map" is not a valid mapped document.');
 });

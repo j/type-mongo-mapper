@@ -6,11 +6,11 @@ import {
   EmbedMany,
   EmbedOne,
   Field
-} from '../../../src/decorators';
-import { EmbedManyAs } from '../../../src/metadata/index';
-import { classToDocument } from '../../../src/serializers/classToDocument';
+} from '../../../../src/decorators';
+import { unmap } from '../../../../src/mappers/unmap';
+import { EmbedManyAs } from '../../../../src/metadata/index';
 
-test('classToDocument() with simple class', async t => {
+test('unmap() with simple class', async t => {
   const id = new ObjectID();
 
   @Document()
@@ -25,7 +25,7 @@ test('classToDocument() with simple class', async t => {
   user.firstName = 'John';
   user.lastName = 'Doe';
 
-  const doc = classToDocument(user);
+  const doc = unmap(user);
 
   t.false(doc instanceof User);
   t.deepEqual(doc, {
@@ -35,7 +35,7 @@ test('classToDocument() with simple class', async t => {
   });
 });
 
-test('classToDocument() with @EmbeddedDocument', async t => {
+test('unmap() with @EmbeddedDocument', async t => {
   const id = new ObjectID();
 
   @EmbeddedDocument()
@@ -65,7 +65,7 @@ test('classToDocument() with @EmbeddedDocument', async t => {
   user.lastName = 'Doe';
   user.address = new Address('San Diego', 92107);
 
-  const doc = classToDocument(user);
+  const doc = unmap(user);
 
   t.false(doc instanceof User);
   t.false(doc.address instanceof Address);
@@ -77,7 +77,7 @@ test('classToDocument() with @EmbeddedDocument', async t => {
   });
 });
 
-test('classToDocument() with array of @EmbeddedDocument', async t => {
+test('unmap() with array of @EmbeddedDocument', async t => {
   const id = new ObjectID();
 
   @EmbeddedDocument()
@@ -110,7 +110,7 @@ test('classToDocument() with array of @EmbeddedDocument', async t => {
     new Address('Carlsbad', 92008)
   ];
 
-  const doc = classToDocument(user);
+  const doc = unmap(user);
 
   t.false(doc instanceof User);
   t.false(doc.addresses[0] instanceof Address);
@@ -126,7 +126,7 @@ test('classToDocument() with array of @EmbeddedDocument', async t => {
   });
 });
 
-test('classToDocument() with object of @EmbeddedDocument', async t => {
+test('unmap() with object of @EmbeddedDocument', async t => {
   const id = new ObjectID();
 
   @EmbeddedDocument()
@@ -159,7 +159,7 @@ test('classToDocument() with object of @EmbeddedDocument', async t => {
     office: new Address('Carlsbad', 92008)
   };
 
-  const doc = classToDocument(user);
+  const doc = unmap(user);
 
   t.false(doc instanceof User);
   t.false(doc.addresses.home instanceof Address);
@@ -175,7 +175,7 @@ test('classToDocument() with object of @EmbeddedDocument', async t => {
   });
 });
 
-test('classToDocument() with Map of @EmbeddedDocument', async t => {
+test('unmap() with Map of @EmbeddedDocument', async t => {
   const id = new ObjectID();
 
   @EmbeddedDocument()
@@ -206,7 +206,7 @@ test('classToDocument() with Map of @EmbeddedDocument', async t => {
   user.addresses.set('home', new Address('San Diego', 92107));
   user.addresses.set('office', new Address('Carlsbad', 92008));
 
-  const doc = classToDocument(user);
+  const doc = unmap(user);
 
   t.false(doc instanceof User);
   t.false(doc.addresses.home instanceof Address);
@@ -222,7 +222,7 @@ test('classToDocument() with Map of @EmbeddedDocument', async t => {
   });
 });
 
-test('classToDocument() throws error when referencing another Document', async t => {
+test('unmap() throws error when referencing another Document', async t => {
   const id1 = new ObjectID();
   const id2 = new ObjectID();
 
@@ -246,7 +246,7 @@ test('classToDocument() throws error when referencing another Document', async t
   jordy.bestFriend = john;
 
   const error = t.throws(() => {
-    classToDocument(jordy);
+    unmap(jordy);
   });
 
   t.is(
@@ -255,7 +255,7 @@ test('classToDocument() throws error when referencing another Document', async t
   );
 });
 
-test('classToDocument() ignores doc field that is not mapped', async t => {
+test('unmap() ignores doc field that is not mapped', async t => {
   const id = new ObjectID();
 
   @Document()
@@ -272,7 +272,7 @@ test('classToDocument() ignores doc field that is not mapped', async t => {
   user.firstName = 'John';
   user.lastName = 'Doe';
 
-  const doc = classToDocument(user);
+  const doc = unmap(user);
 
   t.false(doc instanceof User);
   t.deepEqual(doc, {
@@ -281,7 +281,7 @@ test('classToDocument() ignores doc field that is not mapped', async t => {
   });
 });
 
-test('classToDocument() nested inheritance', async t => {
+test('unmap() nested inheritance', async t => {
   @Document()
   class BaseBaseDocument {
     @Field() public _id: ObjectID;
@@ -310,7 +310,7 @@ test('classToDocument() nested inheritance', async t => {
   user.createdAt = createdAt;
   user.updatedAt = updatedAt;
 
-  const doc = classToDocument(user);
+  const doc = unmap(user);
 
   t.false(doc instanceof User);
   t.deepEqual(doc, {
@@ -322,7 +322,7 @@ test('classToDocument() nested inheritance', async t => {
   });
 });
 
-test('classToDocument() errors on incompatible inheritance type', async t => {
+test('unmap() errors on incompatible inheritance type', async t => {
   @EmbeddedDocument()
   class BaseDocument {
     @Field() public _id: ObjectID;
@@ -339,7 +339,7 @@ test('classToDocument() errors on incompatible inheritance type', async t => {
   user.firstName = 'John';
   user.lastName = 'Doe';
 
-  const error = t.throws(() => classToDocument(user));
+  const error = t.throws(() => unmap(user));
 
   t.is(
     error.message,
@@ -347,15 +347,15 @@ test('classToDocument() errors on incompatible inheritance type', async t => {
   );
 });
 
-test('classToDocument() errors when class passed is not mapped', async t => {
+test('unmap() errors when class passed is not mapped', async t => {
   class User {}
 
   const error = t.throws(() => {
-    classToDocument(new User());
+    unmap(new User());
   });
 
   t.is(
     error.message,
-    'Object passed to "classToDocument" is not a valid mapped document.'
+    'Object passed to "unmap" is not a valid mapped document.'
   );
 });

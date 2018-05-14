@@ -12,8 +12,8 @@ import { eachInMapOrObject } from '../util/eachInMapOrObject';
  *
  * This maps the document to the class.
  */
-export function documentToClass<T>(
-  objOrCtor: T | TypedConstructor<T>,
+export function map<T>(
+  objOrCtor: T | TypedConstructor<T> | Function,
   doc: any
 ): T {
   let object: T;
@@ -22,9 +22,7 @@ export function documentToClass<T>(
     object = new (objOrCtor as TypedConstructor<T>)();
   } else {
     if (!isDocument(objOrCtor.constructor)) {
-      throw new Error(
-        'Object passed to "documentToClass" is not a valid mapped document.'
-      );
+      throw new Error('Object passed to "map" is not a valid mapped document.');
     }
 
     object = objOrCtor as T;
@@ -68,13 +66,16 @@ function process<T>(object: T, doc: any): T {
           );
           break;
         case DocumentMetadataFieldType.EMBED_MAP:
-          const map = new Map<any, any>();
+          const fieldMap = new Map<any, any>();
 
           eachInMapOrObject(value, (k: string, item: any): any => {
-            map.set(k, process(fieldMeta.createEmbeddedInstance(item), item));
+            fieldMap.set(
+              k,
+              process(fieldMeta.createEmbeddedInstance(item), item)
+            );
           });
 
-          object[field] = map;
+          object[field] = fieldMap;
           break;
       }
     }

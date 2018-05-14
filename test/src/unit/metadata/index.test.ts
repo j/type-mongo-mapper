@@ -4,8 +4,8 @@ import {
   defineDocumentMetadata,
   DocumentMetadataType,
   getDocumentMetadata
-} from '../../../src';
-import { processAndValidateMetadata } from '../../../src/metadata/index';
+} from '../../../../src';
+import { processAndValidateMetadata } from '../../../../src/metadata/index';
 
 test('getDocumentMetadata() gets defined metadata', t => {
   class User {}
