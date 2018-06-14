@@ -32,7 +32,6 @@
     "node": ">=8.9"
   },
   "dependencies": {
-    "mongodb": "^3.1.0-beta4",
     "reflect-metadata": "^0.1.12"
   },
   "devDependencies": {
@@ -41,6 +40,7 @@
     "codecov": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "gh-pages": "^1.0.0",
+    "mongodb": "^3.1.0-beta4",
     "mongodb-memory-server": "^1.7.3",
     "npm-run-all": "^4.1.2",
     "nsp": "^3.2.1",

@@ -19,10 +19,13 @@ yarn add type-mongo-mapper
 
 ## Usage
 
+If you want to take advantage of an upcoming feature in mongodb, you must use `mongodb@3.1.0` and higher.  Otherwise, you can just
+use the "map" and "unmap" methods manually when dealing with plain documents. See <a href="https://github.com/mongodb/node-mongodb-native/commit/d03335e246e93635e0ba6716cd5edd351a274f62">this commit</a>
+
 ### Quickstart
 
 ```ts
-import { Document, Field, classToDocument, documentToClass } from 'type-mongo-mapper';
+import { Document, Field, mapper } from 'type-mongo-mapper';
 
 @Document()
 class User {
@@ -40,21 +43,26 @@ class User {
   }
 }
 
+const { map, unmap } = mapper(User);
+
+// pass "map" & "umap" options to collection
+const usersCollection = db.collection('users', { map, unmap });
+
 // Document to User
 
-const user = documentToClass(User, await collection.findOne({ /* ... */ }));
+const user = await usersCollection.findOne({ /* ... */ }) // user is an instanceof User
 
 // Documents to Users
 
-const users = await collection.find({ /* ... */ }).map((doc) => documentToClass(User, doc)).toArray();
+const users = await collection.find({ /* ... */ }); // each item in cursor will be a User
 
 
-// User to document
+// Save a User.
 
 const user = new User();
 user.firstName = 'John';
 user.lastName = 'Doe';
 
-await collection.insertOne(classToDocument(user));
+await collection.insertOne(user);
 
 ```
