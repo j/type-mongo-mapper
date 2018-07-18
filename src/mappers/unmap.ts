@@ -37,7 +37,7 @@ function process<T>(object: T): any {
 
     if (
       typeof value === 'object' &&
-      value.constructor &&
+      typeof value.constructor === 'function' &&
       isDocument(value.constructor)
     ) {
       throw new Error(
