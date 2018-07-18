@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.0.6"></a>
+## [0.0.6](https://github.com/j/type-mongo-mapper/compare/v0.0.5...v0.0.6) (2018-07-18)
+
+
+### Bug Fixes
+
+* use new hasConstructor util ([8cbef68](https://github.com/j/type-mongo-mapper/commit/8cbef68))
+
+
+
 <a name="0.0.5"></a>
 ## [0.0.5](https://github.com/j/type-mongo-mapper/compare/v0.0.4...v0.0.5) (2018-07-18)
 
