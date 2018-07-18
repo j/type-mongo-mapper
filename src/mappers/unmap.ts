@@ -5,6 +5,7 @@ import {
   processAndValidateMetadata
 } from '../metadata';
 import { eachInMapOrObject } from '../util/eachInMapOrObject';
+import { hasConstructor } from '../util/hasConstructor';
 
 /**
  * Expects "object" to be a class with document metadata.
@@ -35,11 +36,7 @@ function process<T>(object: T): any {
   keys.forEach(key => {
     const value: any = object[key];
 
-    if (
-      typeof value === 'object' &&
-      typeof value.constructor === 'function' &&
-      isDocument(value.constructor)
-    ) {
+    if (hasConstructor(value) && isDocument(value.constructor)) {
       throw new Error(
         "Unable to map fields to other Documents. Use ObjectID's to reference another document."
       );
